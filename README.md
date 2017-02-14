@@ -3,5 +3,7 @@
 # BCrud – Blog Manager
 [![Dependencies](https://david-dm.org/cesargdm/bcrud.svg)](https://david-dm.org/cesargdm/bcrud)
 
-## Installing
-Comming up...
+BCrud is an Open Source React-based interface for blog REST APIs.
+
+## Usage
+Feel free to download or fork and modify *src/js/NetworkOperation.js* to retrieve to the specific token-based authentication APIs.
