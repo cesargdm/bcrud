@@ -7,3 +7,8 @@ BCrud is an Open Source React-based interface for blog REST APIs.
 
 ## Usage
 Feel free to download or fork and modify *src/js/NetworkOperation.js* to retrieve to the specific token-based authentication APIs.
+
+## Future realeases
+In future releases the app will be adaptable to specfic routes and costumization of the data manipulation.
+
+&copy; 2017 César Guadarrama Cantú.
