@@ -2,6 +2,7 @@ $light-dark: rgb(50, 50, 50);
 $tint-color: rgb(254, 134, 36);
 $lighter-gray: rgb(214, 214, 214);
 $lightest-gray: rgb(246, 246, 246);
+$red: rgb(222, 41, 41);
 
 *, html, body, div, main, ul, li, input, p, span, textarea {
   margin: 0;
@@ -21,9 +22,13 @@ a {
 input, textarea {
   font-size: 1rem;
   outline: none;
-  padding: 5px 10px;
+  padding: 5px 5px;
+  transition: padding 0.5s;
+  border: 1px solid $lighter-gray;
+  margin-bottom: 5px;
+  border-radius: 3px;
   &:read-only {
-    border: none;
+    border: 1px solid #fff;
   }
 }
 
@@ -37,6 +42,9 @@ input[type="button"] {
   cursor: pointer;
   &.active {
     background: $tint-color;
+  }
+  &.delete {
+    background: $red;
   }
 }
 
@@ -111,6 +119,7 @@ header {
   .exit { background-image: url('./img/exit.png'); }
   .settings { background-image: url('./img/settings.png'); }
   .add { background-image: url('./img/add.png'); }
+  .add-hero { background-image: url('./img/add-hero.png'); }
   .dashboard { background-image: url('./img/dashboard.png'); }
 }
 
@@ -118,6 +127,7 @@ header {
   background-image: url('./img/logo.svg');
   background-size: cover;
 }
+
 
 .login {
   -webkit-app-region: drag;
@@ -143,14 +153,6 @@ header {
   }
 }
 
-.search {
-  width: 30px;
-  height: 30px;
-  background-size: cover;
-  cursor: pointer;
-  background-image: url('/dist/img/search.png');
-}
-
 .section {
   width: 100%;
   display: flex;
@@ -158,7 +160,7 @@ header {
   height: 100vh;
   overflow: scroll;
   //Direct children
-  > .title{
+  > .title {
     -webkit-app-region: drag;
     user-drag: none;
     user-select: none;
@@ -173,7 +175,55 @@ header {
     div {
       margin-right: 10px;
     }
+    .search-wrapper {
+      position: relative;
+      height: 32px;
+      width: 250px;
+      overflow: hidden;
+      margin-right: 0;
+      .search {
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        background-size: 30px;
+        cursor: pointer;
+        background: url(./img/search.png) no-repeat center center;
+        background-size: 30px;
+        margin-right: 0;
+        margin-left: auto;
+        transition: 0.4s ;
+        transition-timing-function: ease;
+        &.active {
+          transform: translateX(-200px);
+        }
+      }
+      .search-input {
+        transform: translateX(100%);
+        margin-right: 0;
+        position: absolute;
+        display: flex;
+        right: 0;
+        top: 0;
+        transition: 0.4s;
+        transition-timing-function: ease;
+        &.active {
+          transform: translateX(0);
+        }
+      }
+    }
+
   }
+}
+
+.form-element {
+  margin: 5px 0;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
 }
 
 .article-detail {
@@ -182,6 +232,7 @@ header {
     width: 100%;
     flex-grow: 1;
     border-radius: 5px;
+    overflow: scroll;
     textarea {
       display: block;
       width: 100%;
@@ -195,7 +246,123 @@ header {
     input {
       display: block;
       &.title {
-        font-size: 1.5rem;
+        font-size: 1.9rem;
+        font-weight: 500;
+      }
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      input[type="button"] {
+        padding: 6px 12px;
+        width: auto;
+        display: inline-block;
+        margin-left: 10px;
+        &.hidden {
+          display: none;
+        }
+      }
+    }
+    .more-images {
+      padding: 30px 0 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-content: space-between;
+      .edit {
+        position: relative;
+        .delete-button {
+          top: -12px;
+          right: -2px;
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 1px solid #fff;
+          background: rgb(223, 55, 38);
+          background-image: url('./img/delete-icon.png');
+          background-size: 20px;
+          background-position: center;
+          background-repeat: none;
+          cursor: pointer;
+          transition: transform 0.5s;
+          animation: popAnimation 0.5s;
+          &:hover {
+            transform: scale(1.15,1.15);
+          }
+        }
+      }
+      .add-more {
+        cursor: pointer;
+        background: rgb(217, 217, 217);
+        border: 1px solid rgb(204, 204, 204);
+        background-image: url('./img/image-icon.png');
+        background-repeat: no-repeat;
+        background-position: center 25px;
+        background-size: 40px;
+        color: #fff;
+        font-weight: 600;
+        padding-top: 65px;
+        text-align: center;
+        transition: background-size 0.5s;
+        &:hover {
+          background: rgb(190, 190, 190);
+          background-image: url('./img/image-icon.png');
+          background-repeat: no-repeat;
+          background-position: center 25px;
+          background-size: 40px;
+        }
+      }
+      img, .add-more {
+        margin: 0 10px;
+        flex-shrink: 0;
+        border-radius: 3px;
+        overflow: hidden;
+        width: 200px;
+        height: 120px;
+        margin-bottom: 20px;
+      }
+    }
+    .hero {
+      position: relative;
+      margin-bottom: 10px;
+      .title {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+      input[type="file"] {
+        display: none;
+        z-index: 120;
+      }
+      .hero-label {
+        width: 100%;
+        height: 200px;
+        background-size: cover;
+        background-position: center center;
+        cursor: pointer;
+        border-radius: 3px;
+        overflow: hidden;
+        &:hover::before, &.editable::before {
+          background: rgba(#000,.5);
+          width: 200px;
+          height: 18px;
+          border-radius: 3px;
+          border: 1px solid #fff;
+          content: 'Cambiar imagen de portada';
+          padding: 5px 10px;
+          padding-left: 35px;
+          background-image: url('./img/image-icon.png');
+          background-repeat: no-repeat;
+          background-size: 20px;
+          background-position: 10px center;
+          color: #fff;
+          z-index: 100;
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+          animation: popAnimation 0.5s;
+        }
       }
     }
   }
@@ -216,12 +383,11 @@ header {
   .article {
     cursor: pointer;
     margin: 10px;
-    max-height: 180px;
+    max-height: 190px;
     display: block;
     width: 240px;
     background: rgb(255, 255, 255);
     border: 1px solid #efefef;
-    // box-shadow: 0px 0px 8px transparentize($tint-color, 0.8);
     border-radius: 3px;
     overflow: hidden;
     .image {
@@ -233,14 +399,34 @@ header {
       img {
         width: 100%;
         position: absolute;
-        top: -50%;
       }
     }
     .content {
       padding: 10px;
-      .title {
-        font-weight: 600;
+      .title-header {
+        display: flex;
+        margin-bottom: 10px;
+        .title {
+          font-weight: 600;
+          flex-shrink: 0;
+          text-overflow: ellipsis;
+        }
+        .types {
+          text-align: right;
+          flex-grow: 1;
+          flex-shrink: 0;
+          span {
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            background: $lighter-gray;
+            border-radius: 2px;
+            margin-left: 3px;
+            color: #fff;
+          }
+        }
       }
+
       .body {
         margin-top: 5px;
         font-size: 0.8rem;
@@ -249,5 +435,17 @@ header {
         overflow: hidden;
       }
     }
+  }
+}
+
+@keyframes popAnimation {
+  0% {
+    transform: scale(0.95,0.95);
+  }
+  50% {
+    transform: scale(1.06,1.06);
+  }
+  100% {
+    transform: scale(1.0,1.0);
   }
 }

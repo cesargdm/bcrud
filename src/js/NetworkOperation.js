@@ -9,12 +9,27 @@ config => {
   return Promise.reject(error)
 })
 
-window.baseUrl = "http://aktiastudio.com:8081"
+//Set the base url in the window variable (global)
+window.baseUrl = "http://localhost:8080"
 
 export default class NetworkOperation {
 
   static getArticles(errorCallback, callback) {
-    axios(window.baseUrl + '/api/projects')
+    axios(`${window.baseUrl}/api/projects`)
+    .then(response => callback(response))
+    .catch(error => errorCallback(error))
+  }
+
+  static deleteArticle(articleId, errorCallback, callback) {
+    axios.delete(window.baseUrl + '/api/projects/' + articleId)
+    .then(response => console.log(response))
+    .catch(error => console.log(error))
+  }
+
+  static updateArticle(article, errorCallback, callback) {
+    console.log('UPDATE ARTICLE:', article);
+                                                  // The API recives the project object
+    axios.put(window.baseUrl + '/api/projects/' + article._id, {project: article})
     .then(response => callback(response))
     .catch(error => errorCallback(error))
   }
@@ -26,13 +41,14 @@ export default class NetworkOperation {
   }
 
   static getAuth(credentials, errorCallback, callback) {
-    axios.post(window.baseUrl + '/api/authenticate',credentials)
+    axios.post(window.baseUrl + '/api/authenticate', credentials)
     .then(response => callback(response))
     .catch(error => errorCallback(error))
   }
 
-  static setArticle(article, errorCallback, callback) {
-    axios.post(window.baseUrl + '/api/projects', article)
+  //With form adata
+  static setArticle(formData, errorCallback, callback) {
+    axios.post(window.baseUrl + '/api/projects', formData)
     .then(response => callback(response))
     .catch(error => errorCallback(error))
   }

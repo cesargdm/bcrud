@@ -4,24 +4,45 @@ import { Link } from 'react-router'
 import NetworkOperation from "../NetworkOperation.js"
 import Article from "./Article.jsx"
 
+//Electron ipcMain for getting messages
+const {ipcRenderer} = require('electron')
+
 export default class Dashboard extends React.Component {
 
   constructor () {
     super()
     this.state = {
-      articles: []
+      showSearch: false,
+      articles: [],
+      filteredArticles: []
     }
+
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(event) {
+
+    const query = event.target.value
+
+    if (query == "") return this.setState({'filteredArticles': this.state.articles})
+
+    this.setState({'filteredArticles': this.state.articles.filter(article => JSON.stringify(article).includes(query))})
+
+  }
+
+  showSearch() {
+    this.setState({showSearch: !this.state.showSearch})
+    if (!this.state.showSearch) setTimeout(() => document.getElementById("search-input").focus(), 300)
   }
 
   componentDidMount() {
 
-    console.log('Component did mount!')
     NetworkOperation.getArticles(
       error => console.error(error),
       response => {
-        console.log('response!!!', response)
         this.setState({
-          articles: response.data.projects
+          articles: response.data.projects,
+          filteredArticles: response.data.projects
         })
       }
     )
@@ -33,10 +54,15 @@ export default class Dashboard extends React.Component {
       <div className="dashboard section">
         <div className="title">
           Dashboard
-          <div className="search"></div>
+          <div className="search-wrapper">
+            <div className={"search " + (this.state.showSearch ? "active" : "")} onClick={this.showSearch.bind(this)}></div>
+            <div className={"search-input " + (this.state.showSearch ? "active" : "")}>
+              <input type="text" id="search-input" onChange={this.handleChange}/>
+            </div>
+          </div>
         </div>
         <div className="articles content">
-          {this.state.articles.map(article => <Link to={`/article/${article._id}`} key={article._id}><Article article={article} key={article._id}/></Link>)}
+          {this.state.filteredArticles.map(article => <Link to={`/article/${article._id}`} key={article._id}><Article article={article} key={article._id}/></Link>)}
         </div>
       </div>
     )

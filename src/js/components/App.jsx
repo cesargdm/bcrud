@@ -12,15 +12,6 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log('Component did mount')
-    axios.get('http://localhost:8080/api/projects')
-    .then(response => {
-      console.log('respose',response.data.projects)
-      this.setState({projects: response.data.projects})
-    })
-    .catch(error => {
-      console.log(error)
-    })
   }
 
   render() {

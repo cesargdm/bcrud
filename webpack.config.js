@@ -21,7 +21,22 @@ module.exports = {
           query: {
               presets: ['es2015']
           }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
       }
     ]
-  }
+  },
+  externals: [
+    (function () {
+      return (context, request, callback) => {
+        if ('electron'.indexOf(request) >= 0) {
+          return callback(null, "require('" + request + "')")
+        }
+        return callback()
+      }
+    })()
+  ],
+  target: 'node'
 }

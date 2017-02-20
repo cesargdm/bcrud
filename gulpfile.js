@@ -14,6 +14,9 @@ gulp.task('sass', () =>
 gulp.task('webpack', () =>
   gulp.src('./src/js/app.jsx')
       .pipe(webpackStream(require('./webpack.config.js'), webpack))
+      .on('error', function handleError() {
+        this.emit('end'); // Recover from errors
+      })
       .pipe(gulp.dest('./app'))
 )
 

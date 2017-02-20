@@ -1,8 +1,4 @@
-const electron = require('electron')
-// Module to control application life.
-const app = electron.app
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const {BrowserWindow, app, Menu, ipcMain} = require('electron')
 
 const path = require('path')
 const url = require('url')
@@ -12,13 +8,15 @@ const url = require('url')
 let mainWindow
 
 function createWindow () {
+
+  app.setName('Bcrud')
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 900, height: 556, titleBarStyle: 'hidden-inset', })
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
   }))
 
   // Emitted when the window is closed.
@@ -28,6 +26,7 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
 }
 
 // This method will be called when Electron has finished
@@ -50,6 +49,7 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+
 })
 
 // In this file you can include the rest of your app's specific main process
