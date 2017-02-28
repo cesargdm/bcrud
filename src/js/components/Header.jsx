@@ -20,7 +20,7 @@ export default class Header extends React.Component {
             {/*<NavLink to="/"><li className="logo"></li></NavLink>*/}
             <NavLink to="/dashboard"><li className="dashboard"></li></NavLink>
             <NavLink to="/add"><li className="add"></li></NavLink>
-            <NavLink to="/add-hero"><li className="add-hero"></li></NavLink>
+            {/*<NavLink to="/add-hero"><li className="add-hero"></li></NavLink>*/}
             {/*
             <li className="search">
               <div className="search-element">

@@ -233,6 +233,13 @@ label {
     flex-grow: 1;
     border-radius: 5px;
     overflow: scroll;
+    .loading {
+      width: 30px;
+      height: 30px;
+      &.hidden {
+        display: none;
+      }
+    }
     textarea {
       display: block;
       width: 100%;
@@ -302,9 +309,22 @@ label {
         background-size: 40px;
         color: #fff;
         font-weight: 600;
-        padding-top: 65px;
         text-align: center;
         transition: background-size 0.5s;
+        position: relative;
+        label {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          padding-top: 65px;
+          height: 100%;
+          width: 100%;
+          cursor: pointer;
+        }
+        input {
+          display: none;
+        }
         &:hover {
           background: rgb(190, 190, 190);
           background-image: url('./img/image-icon.png');

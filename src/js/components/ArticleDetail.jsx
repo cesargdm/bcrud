@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, hashHistory } from 'react-router'
+import { Link } from 'react-router'
 
 import NetworkOperation from "../NetworkOperation.js"
 
@@ -16,17 +16,21 @@ export default class ArticleDetail extends React.Component {
       },
       isReadOnly: true
     }
+
+    this.handleChange = this.handleChange.bind(this)
+
   }
 
   deleteArticle(articleId) {
     NetworkOperation.deleteArticle(articleId,
-      (error) => {
+      error => {
         alert('Could not delete article')
         this.setState({'isReadOnly': true})
       },
-      (response) => {
-        this.context.router.push('/dashboard')
+      response => {
         //Return to navigation and display success message
+        alert('Proyecto eliminado')
+        this.props.router.push('/dashboard')
       }
     )
   }
@@ -34,14 +38,13 @@ export default class ArticleDetail extends React.Component {
   updateArticle() {
     //Set loading animation
     NetworkOperation.updateArticle(this.state.article,
-      (error) => {
+      error => {
         //Handle errors
         alert('Could not update article')
         this.setState({'isReadOnly': true})
       },
-      (response) => {
+      response => {
         //Change the article state from returned data
-        console.log('RESPONSE:', response.data)
         this.setState({
           article: response.data.project,
           'isReadOnly': true
@@ -51,28 +54,85 @@ export default class ArticleDetail extends React.Component {
   }
 
   handleChange(event) {
-    //Check if wich button has been clicked
-    let tempArticle = this.state.article
+    //Set tem new article to update and modify and later set state to this new article
+    let newArticle = this.state.article
 
+    if (event.target.className === "delete-button") {
+      const index = newArticle.images.more.indexOf(event.target.id)
+      if (index !== -1) {
+          newArticle.images.more.splice(index, 1)
+      }
+      this.setState({ article: newArticle })
+      return
+    }
+
+    //Check if wich button has been clicked
     switch (event.target.id) {
       case "edit-save":
-        if(!this.state.isReadOnly)
+        if (!this.state.isReadOnly)
           return this.updateArticle() //Update the article and handle the state changes after network operation
         this.setState({'isReadOnly': !this.state.isReadOnly})
         break
       case "body":
-        tempArticle.body = event.target.value
-        this.setState({article: tempArticle})
+        newArticle.body = event.target.value
+        this.setState({article: newArticle})
+        break
+      case "hero":
+        const heroFile = event.target.files[0]
+        let formData = new FormData()
+        formData.append('file', heroFile)
+
+        //Start upload animation with progress bar
+        document.getElementById('hero-loading').classList.remove('hidden')
+
+        NetworkOperation.uploadFile(formData,
+          error => {
+            //Stop upload animation
+            document.getElementById('hero-loading').classList.add('hidden')
+            alert('Could not upload file')
+          },
+          response => {
+            newArticle.images.main = response.data.file.name
+
+            this.setState({
+              article: newArticle
+            })
+
+            this.updateArticle()
+            //Stop upload animation
+            document.getElementById('hero-loading').classList.add('hidden')
+          }
+        )
+
+        break
+      case "add-image":
+        const newImage = event.target.files[0]
+        let imageFormData = new FormData()
+        imageFormData.append('file', newImage)
+
+        NetworkOperation.uploadFile(imageFormData,
+          error => {
+            alert('Could not upload file')
+          },
+          response => {
+            newArticle.images.more.push(response.data.file.name)
+            this.setState({
+              article: newArticle
+            })
+            this.updateArticle()
+          }
+        )
+
         break
       case "delete":
-        console.log('Should delete')
-        this.deleteArticle(tempArticle._id)
+        this.deleteArticle(newArticle._id)
         break
       case "type":
+        //Todo set projects type
         break
       case "title":
-        tempArticle.title = event.target.value
-        this.setState({article: tempArticle})
+        newArticle.title = event.target.value
+        this.setState({article: newArticle})
         break
       default:
         return
@@ -80,11 +140,9 @@ export default class ArticleDetail extends React.Component {
   }
 
   componentDidMount() {
-    NetworkOperation.getArticle(
-    this.props.params.id,
-    (error) => alert(error),
-    (response) => {
-      console.log(response.data.project.images);
+    NetworkOperation.getArticle(this.props.params.id,
+    error => alert(error.message),
+    response => {
       this.setState({
         article: response.data.project
       })
@@ -94,7 +152,7 @@ export default class ArticleDetail extends React.Component {
 
   render() {
     const heroStyle = {
-      backgroundImage: `url(${window.baseUrl}/static/img/projects/${this.state.article.name}/${this.state.article.images.main})`
+      backgroundImage: `url(${window.baseUrl}/static/uploads/${this.state.article.images.main})`
     }
 
     return (
@@ -105,8 +163,12 @@ export default class ArticleDetail extends React.Component {
         </div>
         <div className="content">
           <div className="hero">
-            <label htmlFor="hero-input" style={heroStyle} className={`hero-label ${this.state.isReadOnly ? "" : "editable"}`}></label>
-            <input type="file" id="hero-input"></input>
+            <label
+              htmlFor="hero"
+              style={heroStyle}
+              className={`hero-label ${this.state.isReadOnly ? "" : "editable"}`}/>
+            <img src="./app/img/loading.svg" className="loading hidden" id="hero-loading"/>
+            <input type="file" onChange={this.handleChange} id="hero"/>
           </div>
           <input type="text"
             id="title"
@@ -128,14 +190,15 @@ export default class ArticleDetail extends React.Component {
             readOnly={this.state.isReadOnly}>
           </textarea>
           <div className="more-images">
-            {this.state.article.images.more.map(imageUrl =>
-              <div className={this.state.isReadOnly ? "" : "edit"} key={imageUrl}>
-                <div className="delete-button" onClick=""></div>
-                <img src={`${window.baseUrl}/static/img/projects/${this.state.article.name}/${imageUrl}`}/>
+            {this.state.article.images.more.map(imageId =>
+              <div className={this.state.isReadOnly ? "" : "edit"} key={imageId}>
+                <div className="delete-button" onClick={this.handleChange.bind(this)} id={imageId}></div>
+                <img src={`${window.baseUrl}/static/uploads/${imageId}`}/>
               </div>
             )}
             <div className="add-more">
-              <p>Añadir imagen</p>
+              <label htmlFor="add-image">Añadir imagen</label>
+              <input type="file" onChange={this.handleChange} id="add-image"/>
             </div>
           </div>
           <div className="actions">

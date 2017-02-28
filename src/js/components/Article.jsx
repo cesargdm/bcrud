@@ -5,7 +5,7 @@ export default class Article extends React.Component {
     return (
       <div className="article" key="{this.props.article._id}">
         <div className="image">
-          <img src={`${window.baseUrl}/static/img/projects/${this.props.article.name}/${this.props.article.images.main}`}></img>
+          <img src={`${window.baseUrl}/static/uploads/${this.props.article.images.main}`}></img>
         </div>
         <div className="content">
           <div className="title-header">

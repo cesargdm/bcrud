@@ -21,14 +21,12 @@ export default class NetworkOperation {
   }
 
   static deleteArticle(articleId, errorCallback, callback) {
-    axios.delete(window.baseUrl + '/api/projects/' + articleId)
-    .then(response => console.log(response))
-    .catch(error => console.log(error))
+    axios.delete(`${window.baseUrl}/api/projects/${articleId}`)
+    .then(response => callback(response))
+    .catch(error => errorCallback(error))
   }
 
   static updateArticle(article, errorCallback, callback) {
-    console.log('UPDATE ARTICLE:', article);
-                                                  // The API recives the project object
     axios.put(window.baseUrl + '/api/projects/' + article._id, {project: article})
     .then(response => callback(response))
     .catch(error => errorCallback(error))
@@ -51,6 +49,12 @@ export default class NetworkOperation {
     axios.post(window.baseUrl + '/api/projects', formData)
     .then(response => callback(response))
     .catch(error => errorCallback(error))
+  }
+
+  static uploadFile(formData, errorCallback, callback) {
+    axios.post(`${window.baseUrl}/api/upload`, formData)
+    .then(callback)
+    .catch(errorCallback)
   }
 
 }
