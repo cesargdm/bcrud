@@ -1,6 +1,9 @@
 docs
 node_modules
 
+app/*.js
+app/*.css
+
 # Logs
 logs
 *.log
