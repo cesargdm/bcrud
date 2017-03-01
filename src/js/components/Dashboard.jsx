@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 
 import NetworkOperation from "../NetworkOperation.js"
 import Article from "./Article.jsx"
+import TryAgain from "./TryAgain.jsx"
 
 //Electron ipcMain for getting messages
 const {ipcRenderer} = require('electron')
@@ -37,8 +38,20 @@ export default class Dashboard extends React.Component {
 
   componentDidMount() {
 
+    this.getArticles()
+
+  }
+
+  getArticles() {
+
+    console.log('Getting articles')
+
+    document.getElementById('try-again').classList.remove('visible')
+
     NetworkOperation.getArticles(
-      error => console.error(error),
+      error => {
+        document.getElementById('try-again').classList.add('visible')
+      },
       response => {
         this.setState({
           articles: response.data.projects,
@@ -46,7 +59,6 @@ export default class Dashboard extends React.Component {
         })
       }
     )
-
   }
 
   render() {
@@ -62,7 +74,17 @@ export default class Dashboard extends React.Component {
           </div>
         </div>
         <div className="articles content">
-          {this.state.filteredArticles.map(article => <Link to={`/article/${article._id}`} key={article._id}><Article article={article} key={article._id}/></Link>)}
+          <TryAgain
+            context={this}
+            action={this.getArticles}
+            message="Hay problemas cargando los proyectos"
+            actionMessage="Intentar de nuevo"/>
+          {this.state.filteredArticles.map(article =>
+            <Link to={`/article/${article._id}`}
+              key={article._id}>
+              <Article article={article} key={article._id}/>
+            </Link>)
+          }
         </div>
       </div>
     )
